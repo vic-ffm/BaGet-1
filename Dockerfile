@@ -9,10 +9,10 @@ HEALTHCHECK --interval=5s --timeout=5s CMD curl -f http://127.0.0.1:80 || exit 1
 # Install node
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
-RUN npm install
-ENV PATH="/usr/lib/node_modules/npm:${PATH}"
 # Set the dir where the app should be located
 WORKDIR /app
+# Install npm
+RUN npm install
 # Copy the application from the APP_PATH env var to .
 ARG APP_PATH
 RUN echo $APP_PATH
