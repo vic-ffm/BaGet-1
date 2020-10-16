@@ -2,7 +2,6 @@
 # Using Microsoft .net core image
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 EXPOSE 80
-EXPOSE 8080
 # Maintainer
 LABEL maintainer "support@ffm.vic.gov.au"
 # Set an internal health check for diagnostics
@@ -11,6 +10,7 @@ HEALTHCHECK --interval=5s --timeout=5s CMD curl -f http://127.0.0.1:80 || exit 1
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install
+ENV PATH="/usr/lib/node_modules/npm:${PATH}"
 # Set the dir where the app should be located
 WORKDIR /app
 # Copy the application from the APP_PATH env var to .
