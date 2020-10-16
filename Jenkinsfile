@@ -6,33 +6,17 @@ timestamps {
 			checkout scm
 		}
 
-		docker.image('mcr.microsoft.com/dotnet/core/sdk:3.1').inside() {
-            stage('Install Node') {
-                sh 'curl -sL https://deb.nodesource.com/setup_10.x | bash -'
-                sh 'apt-get install -y nodejs'
-            }
-			stage('Restore Dependencies') {
-				sh 'dotnet restore src/BaGet'
-			}
-			stage('Build') {
-				sh 'dotnet build -c Release -o ${WORKSPACE}/${BUILD_TAG} src/BaGet'
-			}
-			stage('Publish') {
-				sh 'dotnet publish -c Release -o ${WORKSPACE}/${BUILD_TAG} src/BaGet'
-			}
-		}
-
 		stage('Build Docker Image') {
 			def releaseImage
 
 			// Tag branches with their branch name if not master
 			if( env.BRANCH_NAME == "master" ) {
-				releaseImage = docker.build('baget', '--build-arg APP_PATH=${BUILD_TAG} .')
+				releaseImage = docker.build('baget', '.')
 			} else {
 				def BRANCH_NAME_LOWER = BRANCH_NAME.toLowerCase().replaceAll(" ","_")
 				// Non-env. variable needs double quotes to be parsed correctly (bash variables work better with single quotes)
 				def IMAGE_NAME = "baget_${BRANCH_NAME_LOWER}"
-				releaseImage = docker.build(IMAGE_NAME, '--build-arg APP_PATH=${BUILD_TAG} .')
+				releaseImage = docker.build(IMAGE_NAME, '.')
 			}
 
 			// Push the image with two tags:
