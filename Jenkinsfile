@@ -7,6 +7,10 @@ timestamps {
 		}
 
 		docker.image('mcr.microsoft.com/dotnet/core/sdk:3.1').inside() {
+            stage('Install Node') {
+                sh 'curl -sL https://deb.nodesource.com/setup_10.x | bash -'
+                sh 'apt-get install -y nodejs'
+            }
 			stage('Restore Dependencies') {
 				sh 'dotnet restore src/BaGet'
 			}
