@@ -1,19 +1,21 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
-WORKDIR /app
+## This Dockerfile is used by Jenkins to build the release image
+# Using Microsoft .net core image
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 EXPOSE 80
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+# Maintainer
+LABEL maintainer "support@ffm.vic.gov.au"
+# Set an internal health check for diagnostics
+HEALTHCHECK --interval=5s --timeout=5s CMD curl -f http://127.0.0.1:80 || exit 1
+# Install node
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
-WORKDIR /src
-COPY /src .
-RUN dotnet restore BaGet
-RUN dotnet build BaGet -c Release -o /app
-
-FROM build AS publish
-RUN dotnet publish BaGet -c Release -o /app
-
-FROM base AS final
+# Set the dir where the app should be located
 WORKDIR /app
-COPY --from=publish /app .
+# Copy the application from the APP_PATH env var to .
+ARG APP_PATH
+RUN echo $APP_PATH
+COPY $APP_PATH .
+RUN mkdir -p /var/baget
+RUN chmod 755 /var/baget
+# Set the entrypoint for the container
 ENTRYPOINT ["dotnet", "BaGet.dll"]
