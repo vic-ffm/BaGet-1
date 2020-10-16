@@ -5,8 +5,8 @@ timestamps {
 			// Checkout the repo
 			checkout scm
 		}
-    
-		docker.image('microsoft/dotnet:2.1-sdk').inside() {
+
+		docker.image('mcr.microsoft.com/dotnet/core/sdk:3.1').inside() {
 			stage('Restore Dependencies') {
 				sh 'dotnet restore src/BaGet'
 			}
@@ -26,11 +26,11 @@ timestamps {
 				releaseImage = docker.build('baget', '--build-arg APP_PATH=${BUILD_TAG} .')
 			} else {
 				def BRANCH_NAME_LOWER = BRANCH_NAME.toLowerCase().replaceAll(" ","_")
-				// Non-env. variable needs double quotes to be parsed correctly (bash variables work better with single quotes)				
+				// Non-env. variable needs double quotes to be parsed correctly (bash variables work better with single quotes)
 				def IMAGE_NAME = "baget_${BRANCH_NAME_LOWER}"
 				releaseImage = docker.build(IMAGE_NAME, '--build-arg APP_PATH=${BUILD_TAG} .')
 			}
-        
+
 			// Push the image with two tags:
 			//  - Incremental build number from Jenkins
 			//  - The 'latest' tag.
