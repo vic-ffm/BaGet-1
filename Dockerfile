@@ -2,6 +2,7 @@
 # Using Microsoft .net core image
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 EXPOSE 80
+EXPOSE 8080
 # Maintainer
 LABEL maintainer "support@ffm.vic.gov.au"
 # Set an internal health check for diagnostics
