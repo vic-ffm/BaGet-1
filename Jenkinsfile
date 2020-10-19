@@ -6,32 +6,43 @@ timestamps {
 			checkout scm
 		}
 
+        // Jenkins pipeline has a bug where it does not support a multi-stage docker build
+        // https://issues.jenkins-ci.org/browse/JENKINS-44789
+        // https://issues.jenkins-ci.org/browse/JENKINS-44609
+        // https://issues.jenkins-ci.org/browse/JENKINS-31507
+        // The work around is to invoke docker from the shell
 		stage('Build Docker Image') {
-			def releaseImage
+			def imageName
 
 			// Tag branches with their branch name if not master
 			if( env.BRANCH_NAME == "master" ) {
-				releaseImage = docker.build('baget', '.')
+			    imageName = "baget"
 			} else {
-				def BRANCH_NAME_LOWER = BRANCH_NAME.toLowerCase().replaceAll(" ","_")
+				def branchName = BRANCH_NAME.toLowerCase().replaceAll(" ","_")
 				// Non-env. variable needs double quotes to be parsed correctly (bash variables work better with single quotes)
-				def IMAGE_NAME = "baget_${BRANCH_NAME_LOWER}"
-				releaseImage = docker.build(IMAGE_NAME, '.')
+				imageName = "baget_${branchName}"
 			}
+			sh "docker build --name ${imageName} ."
 
 			// Push the image with two tags:
 			//  - Incremental build number from Jenkins
 			//  - The 'latest' tag.
 			docker.withRegistry('http://registry.ffm.vic.gov.au:31337/') {
-				echo "Pushing Docker Image - ${env.BUILD_NUMBER}"
-				releaseImage.push("${env.BUILD_NUMBER}")
-				echo "Pushing Docker Image - latest"
-				releaseImage.push("latest")
+				echo "Pushing Docker Image - ${imageName}:${env.BUILD_NUMBER}"
+				sh "docker push http://registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
+				echo "Pushing Docker Image - ${imageName}:latest"
+				sh "docker push http://registry.ffm.vic.gov.au:31337/${imageName}:latest"
 			}
 
 			// Trigger release if this is master
 			if( env.BRANCH_NAME == "master" ) {
-			    build job: '../deploy-to-dev', parameters: [string(name: 'DOCKER_REPOSITORY', value: 'registry.ffm.vic.gov.au:31337'), string(name: 'DOCKER_IMAGE', value: 'baget'), string(name: 'DOCKER_TAG', value: "${env.BUILD_NUMBER}")], wait: false
+			    build job: '../deploy-to-dev',
+			    parameters: [
+			        string(name: 'DOCKER_REPOSITORY', value: 'registry.ffm.vic.gov.au:31337'),
+			        string(name: 'DOCKER_IMAGE', value: "${imageName}"),
+			        string(name: 'DOCKER_TAG', value: "${env.BUILD_NUMBER}")
+			    ],
+			    wait: false
 			}
 		}
 	}
