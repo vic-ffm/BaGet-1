@@ -29,9 +29,12 @@ timestamps {
 			//  - The 'latest' tag.
 			docker.withRegistry('http://registry.ffm.vic.gov.au:31337/') {
 				echo "Pushing Docker Image - ${imageName}:${env.BUILD_NUMBER}"
-				sh "docker push http://registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
-				echo "Pushing Docker Image - ${imageName}:latest"
-				sh "docker push http://registry.ffm.vic.gov.au:31337/${imageName}:latest"
+
+				sh "docker ${imageName} http://registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
+                sh "docker push http://registry.ffm.vic.gov.au:31337/${imageName}"
+
+				//echo "Pushing Docker Image - ${imageName}:latest"
+				//sh "docker push http://registry.ffm.vic.gov.au:31337/${imageName}:latest"
 			}
 
 			// Trigger release if this is master
