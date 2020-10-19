@@ -22,14 +22,14 @@ timestamps {
 				// Non-env. variable needs double quotes to be parsed correctly (bash variables work better with single quotes)
 				imageName = "baget_${branchName}"
 			}
-			sh "docker build --label ${imageName} ."
+			sh "docker build -t ${imageName}:latest ."
 
 			// Push the image with two tags:
 			//  - Incremental build number from Jenkins
 			//  - The 'latest' tag.
             echo "Pushing Docker Image - ${imageName}:${env.BUILD_NUMBER}"
 
-            sh "docker tag ${imageName} registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
+            sh "docker tag ${imageName}:latest registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
             sh "docker push registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
 
             //echo "Pushing Docker Image - ${imageName}:latest"
