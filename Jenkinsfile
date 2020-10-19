@@ -22,7 +22,7 @@ timestamps {
 				// Non-env. variable needs double quotes to be parsed correctly (bash variables work better with single quotes)
 				imageName = "baget_${branchName}"
 			}
-			sh "docker build --name ${imageName} ."
+			sh "docker build --label ${imageName} ."
 
 			// Push the image with two tags:
 			//  - Incremental build number from Jenkins
