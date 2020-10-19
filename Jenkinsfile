@@ -30,7 +30,7 @@ timestamps {
 			docker.withRegistry('http://registry.ffm.vic.gov.au:31337/') {
 				echo "Pushing Docker Image - ${imageName}:${env.BUILD_NUMBER}"
 
-				sh "docker ${imageName} http://registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
+				sh "docker tag ${imageName} http://registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
                 sh "docker push http://registry.ffm.vic.gov.au:31337/${imageName}"
 
 				//echo "Pushing Docker Image - ${imageName}:latest"
