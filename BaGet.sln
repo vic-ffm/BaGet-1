@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		src\Directory.Build.props = src\Directory.Build.props
 		nuget.config = nuget.config
+		Dockerfile = Dockerfile
+		Jenkinsfile = Jenkinsfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaGet.Hosting", "src\BaGet.Hosting\BaGet.Hosting.csproj", "{D68B56AC-98DD-4DA7-B4F8-1243538A8A5C}"
