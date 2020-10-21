@@ -16,7 +16,7 @@ RUN dotnet build BaGet -c Release -o /app
 FROM build AS publish
 RUN dotnet publish BaGet -c Release -o /app
 
-FROM base
+FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "BaGet.dll"]

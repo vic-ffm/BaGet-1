@@ -27,13 +27,13 @@ timestamps {
 			// Push the image with two tags:
 			//  - Incremental build number from Jenkins
 			//  - The 'latest' tag.
-            echo "Pushing Docker Image - ${imageName}:${env.BUILD_NUMBER}"
-            sh "docker tag ${imageName}:latest registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
-            sh "docker push registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
+			echo "Pushing Docker Image - ${imageName}:${env.BUILD_NUMBER}"
+			sh "docker tag ${imageName}:latest registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
+			sh "docker push registry.ffm.vic.gov.au:31337/${imageName}:${env.BUILD_NUMBER}"
 
-            echo "Pushing Docker Image - ${imageName}:latest"
-            sh "docker tag ${imageName}:latest registry.ffm.vic.gov.au:31337/${imageName}:latest"
-            sh "docker push registry.ffm.vic.gov.au:31337/${imageName}:latest"
+			echo "Pushing Docker Image - ${imageName}:latest"
+			sh "docker tag ${imageName}:latest registry.ffm.vic.gov.au:31337/${imageName}:latest"
+			sh "docker push registry.ffm.vic.gov.au:31337/${imageName}:latest"
 
 			// Trigger release if this is master
 			if( env.BRANCH_NAME == "master" ) {
